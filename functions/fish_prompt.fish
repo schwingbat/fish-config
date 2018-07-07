@@ -26,7 +26,7 @@ function fish_prompt
   if test (git rev-parse --git-dir 2>/dev/null)
     set_color cyan
     set branch (git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    echo -n "|$branch"
+    echo -n "$branch"
 
     # Check for uncommitted changes
     set modified  (git status --porcelain | grep "^ M" | wc -l | string replace -a " " "")
@@ -34,7 +34,11 @@ function fish_prompt
     set untracked (git status --porcelain | grep "^??" | wc -l | string replace -a " " "")
 
     # • ⬤ ￭ ⚈ ● ᚶ ⚬
-    set git_char "⚬"
+    set git_char "●"
+
+    if [ $deleted != 0 -o $modified != 0 -o $untracked != 0 ]
+      echo -n "["
+    end
 
     if [ $deleted != 0 ]
       set_color red
@@ -52,7 +56,10 @@ function fish_prompt
     end
 
     set_color cyan
-    echo -n "| "
+    if [ $deleted != 0 -o $modified != 0 -o $untracked != 0 ]
+      echo -n "]"
+    end
+    echo -n " "
   end
 
   # Prompt symbol
